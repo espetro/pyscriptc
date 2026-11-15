@@ -14,6 +14,7 @@ from collections.abc import Callable
 from typing import Any
 
 from pyscriptc.reflection import inspect_note
+from pyscriptc.restlower._archive import _archive_method, _tarfile_open, _zipfile_open
 from pyscriptc.restlower._argparse import _parser
 from pyscriptc.restlower._asyncio import (
     _asyncio_create_task,
@@ -112,6 +113,7 @@ from pyscriptc.stdmore import (
 )
 
 __all__ = [
+    "_archive_method",
     "_hashlib_method",
     "_lock_method",
     "_mk_iter",
@@ -215,6 +217,9 @@ _MODULES_AFTER_SPEC: dict[str, Handler] = {
 # Per-attribute handlers that run before keyword arguments are rejected.
 _BEFORE_KEYWORDS: dict[tuple[str, str], Handler] = {
     **{("datetime", attr): _datetime_row(attr) for attr in _DATETIME_ROWS},
+    ("tarfile", "open"): _tarfile_open,
+    ("tarfile", "TarFile"): _tarfile_open,
+    ("zipfile", "ZipFile"): _zipfile_open,
     ("collections", "OrderedDict"): lambda lo, node, span, expect, attr: _ordered(lo, node, span, expect),
     ("collections", "Counter"): lambda lo, node, span, expect, attr: _counter(lo, node, span, expect),
     ("collections", "defaultdict"): lambda lo, node, span, expect, attr: _defaultdict(lo, node, span, expect),

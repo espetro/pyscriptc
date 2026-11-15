@@ -1170,6 +1170,26 @@
       "status": "unprobed"
     },
     {
+      "id": "D69",
+      "seam": "the archive read surface: r:bz2 and r:xz raise RuntimeError at run time (no bzip2 or lzma link), and the extractfile KeyError wording is the runtime's",
+      "listed": true,
+      "docs": "docs/reference/divergences.md#69",
+      "probe": "probes/divergences/d69_archive.py",
+      "cpython": {
+        "stage": "run",
+        "exit": 0,
+        "stdout": "FileNotFoundError\n",
+        "stderr": ""
+      },
+      "pyscriptc": {
+        "stage": "run",
+        "exit": 0,
+        "stdout": "RuntimeError\n",
+        "stderr": ""
+      },
+      "status": "divergent"
+    },
+    {
       "id": "AUDIT-D1",
       "seam": "list.sort() on a module-scope list was a no-op (audit D1)",
       "listed": false,

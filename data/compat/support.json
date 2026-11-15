@@ -1,7 +1,7 @@
 {
   "schema": "1",
   "generated": "2026-11-15",
-  "commit": "3a57a9d5c311ab8342e65d8254f01cd01429c6c6",
+  "commit": "add4324eb3e41304371b4bf8178fc41ef1a33a10",
   "sources": {
     "support_data": "scripts/support_data.toml",
     "pins": "benchmarks/compat/top100/pins.json",
@@ -15,7 +15,7 @@
     },
     "stdlib": {
       "green": 0,
-      "yellow": 72,
+      "yellow": 73,
       "red": 0
     },
     "packages": {
@@ -530,6 +530,16 @@
         "PS1001",
         "PS2001",
         "PS2002"
+      ]
+    },
+    {
+      "label": "`asyncio.subprocess`",
+      "status": "\ud83d\udfe1",
+      "count": 1,
+      "missing": "a stdout= pipe, communicate",
+      "codes": [
+        "PS2001",
+        "PS2003"
       ]
     },
     {

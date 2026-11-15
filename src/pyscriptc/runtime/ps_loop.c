@@ -33,6 +33,18 @@ live setjmp outside the frame's own try).
 #include <string.h>
 #include <time.h>
 
+/* The mobile archive and the WASI link leave ps_aproc.c out (no fork/exec in
+   an app sandbox or a WASI sandbox), so the loop's two hooks into it become
+   no-ops there. The macros are clang builtins the target triple sets, so no
+   Apple, Android or WASI header is needed: __ANDROID__ covers the NDK
+   builds, the two iPhone macros cover the device and the simulator, and
+   __wasm__ covers the WASI targets. */
+#if defined(__ANDROID__) || defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__) \
+    || defined(__ENVIRONMENT_IPHONE_SIMULATOR_VERSION_MIN_REQUIRED__) || defined(__wasm__)
+void ps_aproc_pump(void) {}
+int32_t ps_aproc_pending(void) { return 0; }
+#endif
+
 /* The fd poller (#177): kqueue, epoll or poll() behind one call. This file
    owns the wait; the poller owns the kernel interface. */
 #include "ps_poller.h"
@@ -694,6 +706,9 @@ static void ps_loop_drive(int32_t blocking) {
            the task that parked on it, so the wakeup lands before the next
            drain. */
         ps_to_thread_pump();
+        /* The async subprocess records reap here: a child that exited wakes
+           the task parked on its wait(), the same wake-before-drain order. */
+        ps_aproc_pump();
         /* Readiness first: rows the last poll marked fire before the queue
            drains, so a socket with data is read before any timer. */
         for (int64_t i = 0; i < ps_fd_wait_len; i++) {
@@ -716,7 +731,8 @@ static void ps_loop_drive(int32_t blocking) {
             ps_task_step(task);
             ps_current_task = saved;
         }
-        if (ps_timer_len == 0 && !ps_deadlines_pending() && !ps_threads_pending() && !ps_fd_waits_pending()) {
+        if (ps_timer_len == 0 && !ps_deadlines_pending() && !ps_threads_pending() && !ps_fd_waits_pending()
+            && !ps_aproc_pending()) {
             return;
         }
         if (!blocking) {
@@ -751,9 +767,11 @@ static void ps_loop_drive(int32_t blocking) {
         } else if (earliest >= 0.0) {
             timeout_ms = 0;
         }
-        if (ps_fd_wait_len == 0 && ps_threads_pending() && !ps_deadlines_pending() && ps_timer_len == 0) {
-            /* No timer, no fd, but a thread call is running: the loop spins
-               until the worker finishes (the D3 boundary, unchanged). */
+        if (ps_fd_wait_len == 0 && (ps_threads_pending() || ps_aproc_pending()) && !ps_deadlines_pending()
+            && ps_timer_len == 0) {
+            /* No timer, no fd, but a thread call or a child process is
+               running: the loop spins until it finishes (the D3 boundary,
+               unchanged). */
             struct timespec pause = {0, 1000000};
             nanosleep(&pause, NULL);
             ps_fire_deadlines();

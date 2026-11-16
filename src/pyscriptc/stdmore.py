@@ -1249,6 +1249,7 @@ MODULE_CLASSES: dict[str, tuple[str, ...]] = {
     "selectors": ("DefaultSelector", "SelectorKey"),
     "tarfile": ("TarFile",),
     "zipfile": ("ZipFile",),
+    "email": ("EmailMessage",),
 }
 
 CLASS_FIELDS: dict[str, list[tuple[str, T]]] = {
@@ -1327,6 +1328,9 @@ CLASS_FIELDS: dict[str, list[tuple[str, T]]] = {
     # in the runtime record the open call returns.
     "TarFile": [],
     "ZipFile": [],
+    # The parsed message (issue #1228): the runtime owns the header map,
+    # the part tree and the payload, so the value is the record pointer.
+    "EmailMessage": [],
     # The request record carries what urlopen sends; the response carries what
     # came back. The headers ride as the wire block ("Name: value\n" rows).
     "HttpRequest": [
@@ -1417,7 +1421,7 @@ PTR_CLASSES: frozenset[str] = (
     | QUEUE_CLASSES
     | ASYNC_CLASSES
     | APROC_CLASSES
-    | {"ArgParser", "DefaultSelector", "Hash", "TarFile", "ZipFile"}
+    | {"ArgParser", "DefaultSelector", "Hash", "TarFile", "ZipFile", "EmailMessage"}
 )
 
 TYPE_ALIAS: dict[tuple[str, str], str] = {
@@ -1478,6 +1482,12 @@ TYPE_ALIAS: dict[tuple[str, str], str] = {
     ("selectors", "SelectorKey"): "SelectorKey",
     ("tarfile", "TarFile"): "TarFile",
     ("zipfile", "ZipFile"): "ZipFile",
+    ("email", "Message"): "EmailMessage",
+    ("email", "EmailMessage"): "EmailMessage",
+    # The class CPython names at `email.message.Message` (the module the
+    # class lives in); the subset lowers it as the one EmailMessage.
+    ("email.message", "Message"): "EmailMessage",
+    ("email.message", "EmailMessage"): "EmailMessage",
 }
 
 # Instance methods. `elem` means the deque's element type.
@@ -1840,6 +1850,7 @@ REST_MODULES = frozenset(
         "secrets",
         "selectors",
         "signal",
+        "email",
     }
 )
 
@@ -2029,6 +2040,13 @@ def member_callable(module: str, member: str) -> bool:
     if fixed_spec(module, member) is not None:
         return True
     if type_alias(module, member) is not None:
+        return True
+    # The submodule spellings of a class the parent module lowers
+    # (`email.message.Message` names the EmailMessage the `email` table
+    # holds): the dotted member joins against the parent module through
+    # `_finish_resolve`, so the alias row answers there.
+    head, _, tail = member.rpartition(".")
+    if head and type_alias(module, tail) is not None:
         return True
     if (module, member) in FOR_ONLY or (module, member) in WITH_ONLY:
         return True

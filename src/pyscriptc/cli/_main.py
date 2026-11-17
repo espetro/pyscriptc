@@ -1685,6 +1685,12 @@ def _require_toolchain(args: argparse.Namespace) -> None:
         return
     driver: str | None = args.driver
     if driver is None:
+        # A wheel-only install (`pip install ziglang`) has no `zig` on PATH, so
+        # default selection found nothing; the shim is the last resort.
+        zigshim.ensure_on_path()
+        if shutil.which("zig") is not None:
+            args.driver = "zig"
+            return
         raise IRError(
             "no C toolchain found on PATH (neither zig nor clang), and compiling to a binary needs a C toolchain. "
             f"{zigshim.install_hint()}, or clang (xcode-select --install, apt install clang, ...). "

@@ -61,6 +61,7 @@ from pyscriptc.restlower._functools import _reduce
 from pyscriptc.restlower._hashlib import _hashlib_call, _hashlib_method
 from pyscriptc.restlower._heapq import _heapq_call
 from pyscriptc.restlower._hmac import _hmac, _hmac_compare
+from pyscriptc.restlower._httpserver import _httpserver_call, _httpserver_method
 from pyscriptc.restlower._io import _input, _mkstemp, _named_temp, _open, _print
 from pyscriptc.restlower._iterators import (
     _enumerate_value,
@@ -125,6 +126,7 @@ __all__ = [
     "_archive_method",
     "_email_method",
     "_hashlib_method",
+    "_httpserver_method",
     "_lock_method",
     "_mk_iter",
     "_queue_method",
@@ -215,6 +217,9 @@ _MODULES_AFTER_SPEC: dict[str, Handler] = {
     # The socket subset (#1270): the module's fixed row (gethostname) answers
     # first, and the TCP surface answers the rest.
     "socket": lambda lo, node, span, expect, attr: _socket_call(lo, node, span, expect, attr),
+    # The http.server handler subset (issue #1270): the server class and
+    # the handler base bind as classes, the rest of the module is refused.
+    "http.server": lambda lo, node, span, expect, attr: _httpserver_call(lo, node, span, expect, attr),
     "random": lambda lo, node, span, expect, attr: _random_call(lo, node, span, attr),
     "csv": lambda lo, node, span, expect, attr: _csv_call(lo, node, span, attr),
     "statistics": lambda lo, node, span, expect, attr: _statistics_call(lo, node, span, attr),

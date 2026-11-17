@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 # boxed:begin
+import pyscriptc
 from pyscriptc import bindeps, embed, engine_gate, island_engine, onefile, runcache, sitedeps, stdlibzip
 
 # boxed:end
@@ -218,9 +219,16 @@ def __getattr__(name: str) -> Any:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    pkg_version: str = pyscriptc.__version__
     parser = argparse.ArgumentParser(
         prog="pyscriptc",
         description="Compile a typed Python subset to native code through LLVM.",
+    )
+    parser.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version=f"pyscriptc {pkg_version} (targets CPython 3.14)",
     )
     common: argparse.ArgumentParser = argparse.ArgumentParser(add_help=False)
     common.add_argument("-v", "--verbose", action="store_true", help="enable DEBUG audit records")

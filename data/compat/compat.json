@@ -1,7 +1,7 @@
 {
   "schema": "2",
   "generated": "2026-11-24",
-  "commit": "47308b773507ce0a1604eec21678551140a71ad1",
+  "commit": "757b4cc98658828a6985c8d0ef6ce042adcf5c41",
   "sources": {
     "support_data": "scripts/support_data.toml",
     "pins": "benchmarks/compat/top100/pins.json",
@@ -18,7 +18,7 @@
     "packages": 18,
     "runs": 18,
     "date": "2026-11-24",
-    "commit": "47308b773507ce0a1604eec21678551140a71ad1",
+    "commit": "757b4cc98658828a6985c8d0ef6ce042adcf5c41",
     "source": "benchmarks/compat/top100/island_probe.py"
   },
   "summary": {
@@ -32,7 +32,7 @@
     "packages_partial": 11,
     "packages_none": 8,
     "weighted_pass": 0.0,
-    "fences": 3904
+    "fences": 3898
   },
   "builtins": [
     {
@@ -2147,7 +2147,7 @@
         "blocked": 290
       },
       "evidence": "benchmarks/compat/top100/island_probe.py",
-      "fences": 650,
+      "fences": 644,
       "definitions": 558,
       "fenced_definitions": 278,
       "top_families": [
@@ -2161,7 +2161,7 @@
         },
         {
           "family": "field-lookup",
-          "count": 83
+          "count": 77
         }
       ],
       "codes": [
@@ -2171,7 +2171,7 @@
         },
         {
           "code": "PS2001",
-          "count": 119
+          "count": 115
         },
         {
           "code": "PS1106",
@@ -2726,7 +2726,7 @@
     {
       "code": "PS2001",
       "title": "stdlib name not supported",
-      "count": 426,
+      "count": 422,
       "packages": 17
     },
     {
@@ -2774,7 +2774,7 @@
     {
       "code": "PS2004",
       "title": "operator or operand not supported",
-      "count": 44,
+      "count": 42,
       "packages": 10
     },
     {
@@ -2844,12 +2844,12 @@
     },
     {
       "date": "2026-11-24",
-      "commit": "47308b773507ce0a1604eec21678551140a71ad1",
+      "commit": "757b4cc98658828a6985c8d0ef6ce042adcf5c41",
       "weighted_pass": 0.0,
       "packages_full": 2,
       "packages_partial": 11,
       "packages_none": 8,
-      "fences": 3904
+      "fences": 3898
     }
   ]
 }

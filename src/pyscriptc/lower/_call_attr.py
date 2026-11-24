@@ -74,6 +74,7 @@ from pyscriptc.restlower._httpserver import (
     writer_method as _http_writer_method,
 )
 from pyscriptc.restlower._ndarray import _ndarray_method
+from pyscriptc.restlower._popen import _pipe_method, _popen_method
 from pyscriptc.tirserde import dict_to_node, node_to_dict
 
 # In-place methods per container family: the calls a module-constant
@@ -429,6 +430,10 @@ class CallAttrMixin:
             return _prim_method(self, node, span, receiver)
         if kind == "class" and receiver["type"]["name"] == "AsyncProcess":
             return _proc_method(self, node, span, receiver)
+        if kind == "class" and receiver["type"]["name"] == "Popen":
+            return _popen_method(self, node, span, receiver)
+        if kind == "class" and receiver["type"]["name"] == "PopenPipe":
+            return _pipe_method(self, node, span, receiver)
         if kind == "class" and receiver["type"]["name"] == "Queue":
             return _queue_method(self, node, span, receiver)
         if kind == "class" and receiver["type"]["name"] == "ndarray":

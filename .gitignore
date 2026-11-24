@@ -46,3 +46,10 @@ scripts/social/out/
 scripts/social/demo/demo
 scripts/social/demo/demo.report.json
 !tests/census_pins/*.json
+
+# nightly run artifacts (the receipt harness writes here by default).
+# The two visible-score files the nightly commits are tracked, so they need
+# an explicit un-ignore.
+nightly/
+!nightly/visible-score.json
+!nightly/visible-score.log

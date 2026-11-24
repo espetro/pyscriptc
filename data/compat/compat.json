@@ -1,7 +1,7 @@
 {
   "schema": "2",
   "generated": "2026-11-24",
-  "commit": "07fb3e9046a8cf0230a79ef7f3f5ccfd8cfd2f8f",
+  "commit": "073240dbee9edbe9d9e543df18debde976df2225",
   "sources": {
     "support_data": "scripts/support_data.toml",
     "pins": "benchmarks/compat/top100/pins.json",
@@ -18,7 +18,7 @@
     "packages": 18,
     "runs": 18,
     "date": "2026-11-24",
-    "commit": "07fb3e9046a8cf0230a79ef7f3f5ccfd8cfd2f8f",
+    "commit": "073240dbee9edbe9d9e543df18debde976df2225",
     "source": "benchmarks/compat/top100/island_probe.py"
   },
   "summary": {
@@ -32,7 +32,7 @@
     "packages_partial": 11,
     "packages_none": 8,
     "weighted_pass": 0.0,
-    "fences": 3855
+    "fences": 3842
   },
   "builtins": [
     {
@@ -1826,35 +1826,35 @@
         "blocked": 261
       },
       "evidence": "benchmarks/compat/top100/island_probe.py",
-      "fences": 705,
+      "fences": 696,
       "definitions": 641,
       "fenced_definitions": 244,
       "top_families": [
         {
           "family": "name-resolution",
-          "count": 181
+          "count": 186
         },
         {
           "family": "construct-other",
-          "count": 118
+          "count": 116
         },
         {
           "family": "field-lookup",
-          "count": 64
+          "count": 63
         }
       ],
       "codes": [
         {
           "code": "PS2002",
-          "count": 406
+          "count": 408
         },
         {
           "code": "PS2001",
           "count": 114
         },
         {
-          "code": "PS2003",
-          "count": 44
+          "code": "PS1103",
+          "count": 40
         }
       ],
       "pypi": "https://pypi.org/project/filelock/"
@@ -1959,25 +1959,25 @@
       "island": "runs",
       "plane": {
         "definitions": 34,
-        "native": 21,
+        "native": 22,
         "island": 0,
-        "blocked": 13
+        "blocked": 12
       },
       "evidence": "benchmarks/compat/top100/island_probe.py",
-      "fences": 17,
+      "fences": 14,
       "definitions": 34,
-      "fenced_definitions": 10,
+      "fenced_definitions": 9,
       "top_families": [
-        {
-          "family": "call-arity",
-          "count": 4
-        },
         {
           "family": "construct-other",
           "count": 3
         },
         {
           "family": "optional-types",
+          "count": 2
+        },
+        {
+          "family": "local-inference",
           "count": 2
         }
       ],
@@ -1987,11 +1987,11 @@
           "count": 9
         },
         {
-          "code": "PS2003",
-          "count": 4
+          "code": "PS1102",
+          "count": 2
         },
         {
-          "code": "PS1102",
+          "code": "PS1001",
           "count": 2
         }
       ],
@@ -2194,7 +2194,7 @@
         "blocked": 82
       },
       "evidence": "benchmarks/compat/top100/island_probe.py",
-      "fences": 168,
+      "fences": 167,
       "definitions": 132,
       "fenced_definitions": 73,
       "top_families": [
@@ -2721,7 +2721,7 @@
     {
       "code": "PS2002",
       "title": "construct not supported",
-      "count": 1989,
+      "count": 1991,
       "packages": 19
     },
     {
@@ -2743,16 +2743,16 @@
       "packages": 12
     },
     {
-      "code": "PS2003",
-      "title": "call arguments not supported",
-      "count": 164,
-      "packages": 13
-    },
-    {
       "code": "PS1103",
       "title": "generic alias annotation",
       "count": 158,
       "packages": 11
+    },
+    {
+      "code": "PS2003",
+      "title": "call arguments not supported",
+      "count": 149,
+      "packages": 13
     },
     {
       "code": "PS1003",
@@ -2835,94 +2835,13 @@
   ],
   "history": [
     {
-      "date": "2026-11-10",
-      "commit": "167c088a60b5436094b8286ed14ea6868fe0a493",
-      "weighted_pass": 0.0,
-      "packages_full": 2,
-      "packages_partial": 8,
-      "packages_none": 8,
-      "fences": 2618
-    },
-    {
-      "date": "2026-11-11",
-      "commit": "3002e29a1066f30e122593c2152789eb7bf70914",
-      "weighted_pass": 0.0,
-      "packages_full": 2,
-      "packages_partial": 8,
-      "packages_none": 8,
-      "fences": 2585
-    },
-    {
-      "date": "2026-11-12",
-      "commit": "481ad3ff69d0747f1b86ad43927e7b37914dcf86",
-      "weighted_pass": 0.0,
-      "packages_full": 2,
-      "packages_partial": 8,
-      "packages_none": 8,
-      "fences": 2585
-    },
-    {
-      "date": "2026-11-13",
-      "commit": "7ebd8c40670dccdecfe4096e384b2ea34cf5fa4c",
-      "weighted_pass": 0.0,
-      "packages_full": 2,
-      "packages_partial": 8,
-      "packages_none": 8,
-      "fences": 2585
-    },
-    {
-      "date": "2026-11-15",
-      "commit": "4b1650c6c3fb83880432dae4f4492829af57bcf6",
-      "weighted_pass": 0.0,
-      "packages_full": 2,
-      "packages_partial": 8,
-      "packages_none": 8,
-      "fences": 2870
-    },
-    {
-      "date": "2026-11-16",
-      "commit": "6098eab55544b8b3adfdcbe7bc2058d9a99b8215",
-      "weighted_pass": 0.0,
-      "packages_full": 2,
-      "packages_partial": 8,
-      "packages_none": 8,
-      "fences": 2865
-    },
-    {
-      "date": "2026-11-17",
-      "commit": "1651909675bdfac8c1bcd9abcec754d6f48e75d0",
-      "weighted_pass": 0.0,
-      "packages_full": 2,
-      "packages_partial": 11,
-      "packages_none": 8,
-      "fences": 4238
-    },
-    {
-      "date": "2026-11-18",
-      "commit": "20c2c05dcb75d7b092061703c5a6d6e4586af33a",
-      "weighted_pass": 0.0,
-      "packages_full": 2,
-      "packages_partial": 11,
-      "packages_none": 8,
-      "fences": 3944
-    },
-    {
-      "date": "2026-11-23",
-      "commit": "30575a11e3c4e57f2c45a4269fc24e10251eff55",
-      "weighted_pass": 0.0,
-      "packages_full": 2,
-      "packages_partial": 11,
-      "packages_none": 8,
-      "fences": 3904
-    },
-    {
       "date": "2026-11-24",
-      "commit": "07fb3e9046a8cf0230a79ef7f3f5ccfd8cfd2f8f",
+      "commit": "073240dbee9edbe9d9e543df18debde976df2225",
       "weighted_pass": 0.0,
       "packages_full": 2,
       "packages_partial": 11,
       "packages_none": 8,
-      "fences": 3855
+      "fences": 3842
     }
   ]
 }

@@ -125,6 +125,23 @@ class ExprCompareMixin:
                 if info is not None:
                     # No __eq__ on a user class: CPython falls back to identity.
                     return _compare(op, left, right, span)
+            tuple_l = self.classes.get(str(left["type"].get("name")), {}).get("tuple")
+            tuple_r = self.classes.get(str(right["type"].get("name")), {}).get("tuple")
+            if left_kind == "class" and right_kind == "class" and not tuple_l and not tuple_r:
+                dispatched = self._compare_dispatch(node, op, left, right, span)
+                if dispatched is not None:
+                    return dispatched
+                lname = str(left["type"]["name"])
+                rname = str(right["type"]["name"])
+                related = self._class_in_chain(lname, rname) or self._class_in_chain(rname, lname)
+                if related:
+                    # One inheritance chain, one layout prefix: the pointer
+                    # compare is CPython's identity fallback.
+                    return _compare(op, left, right, span)
+                # No lowered class inherits from both: the objects cannot be
+                # identical, and CPython's NotImplemented fall-through is the
+                # fenced case (decision 2026-11-23, divergence 97).
+                return _const_bool(op == "!=", span)
             if types_equal(left["type"], right["type"]):
                 if left["type"]["kind"] == "list":
                     return self._seq_eq(node, left, right, span, negated=op == "!=")
@@ -134,6 +151,15 @@ class ExprCompareMixin:
                 # `list[float] == list[int]` compares element-wise; each pair
                 # goes through the int/float compare, which is exact.
                 return self._seq_eq(node, left, right, span, negated=op == "!=")
+        if left_kind == "class" and right_kind == "class" and op in {"<", "<=", ">", ">="}:
+            dispatched = self._compare_dispatch(node, op, left, right, span)
+            if dispatched is not None:
+                return dispatched
+            self.fail(
+                node,
+                "PS2004",
+                f"{op} on {left['type']['name']} and {right['type']['name']} cannot decide the dunder",
+            )
         if left_kind != right_kind or left_kind not in {
             "int",
             "float",

@@ -1,7 +1,7 @@
 {
   "schema": "2",
   "generated": "2026-11-24",
-  "commit": "757b4cc98658828a6985c8d0ef6ce042adcf5c41",
+  "commit": "ca53d57224e3172b3a2ca07457b5548965d40599",
   "sources": {
     "support_data": "scripts/support_data.toml",
     "pins": "benchmarks/compat/top100/pins.json",
@@ -18,7 +18,7 @@
     "packages": 18,
     "runs": 18,
     "date": "2026-11-24",
-    "commit": "757b4cc98658828a6985c8d0ef6ce042adcf5c41",
+    "commit": "ca53d57224e3172b3a2ca07457b5548965d40599",
     "source": "benchmarks/compat/top100/island_probe.py"
   },
   "summary": {
@@ -32,7 +32,7 @@
     "packages_partial": 11,
     "packages_none": 8,
     "weighted_pass": 0.0,
-    "fences": 3898
+    "fences": 3895
   },
   "builtins": [
     {
@@ -1687,7 +1687,7 @@
         "blocked": 54
       },
       "evidence": "benchmarks/compat/top100/island_probe.py",
-      "fences": 197,
+      "fences": 196,
       "definitions": 148,
       "fenced_definitions": 52,
       "top_families": [
@@ -1866,14 +1866,14 @@
       "island": "runs",
       "plane": {
         "definitions": 133,
-        "native": 53,
+        "native": 54,
         "island": 18,
-        "blocked": 62
+        "blocked": 61
       },
       "evidence": "benchmarks/compat/top100/island_probe.py",
-      "fences": 188,
+      "fences": 187,
       "definitions": 133,
-      "fenced_definitions": 71,
+      "fenced_definitions": 70,
       "top_families": [
         {
           "family": "unlowered-type-name",
@@ -2147,7 +2147,7 @@
         "blocked": 290
       },
       "evidence": "benchmarks/compat/top100/island_probe.py",
-      "fences": 644,
+      "fences": 643,
       "definitions": 558,
       "fenced_definitions": 278,
       "top_families": [
@@ -2774,7 +2774,7 @@
     {
       "code": "PS2004",
       "title": "operator or operand not supported",
-      "count": 42,
+      "count": 39,
       "packages": 10
     },
     {
@@ -2844,12 +2844,12 @@
     },
     {
       "date": "2026-11-24",
-      "commit": "757b4cc98658828a6985c8d0ef6ce042adcf5c41",
+      "commit": "ca53d57224e3172b3a2ca07457b5548965d40599",
       "weighted_pass": 0.0,
       "packages_full": 2,
       "packages_partial": 11,
       "packages_none": 8,
-      "fences": 3898
+      "fences": 3895
     }
   ]
 }

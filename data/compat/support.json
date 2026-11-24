@@ -1,7 +1,7 @@
 {
   "schema": "1",
   "generated": "2026-11-24",
-  "commit": "757b4cc98658828a6985c8d0ef6ce042adcf5c41",
+  "commit": "ca53d57224e3172b3a2ca07457b5548965d40599",
   "sources": {
     "support_data": "scripts/support_data.toml",
     "pins": "benchmarks/compat/top100/pins.json",
@@ -974,7 +974,7 @@
       "name": "h11",
       "version": "0.16.0",
       "status": "\ud83d\udd34",
-      "ratio": "71/133",
+      "ratio": "70/133",
       "blocking": "unlowered-type-name (20), reflection (17), generic-alias (14)",
       "codes": "PS2002, PS1106, PS1203"
     },

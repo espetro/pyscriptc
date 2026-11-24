@@ -17,8 +17,10 @@ shape the interactive caller is here to avoid.
 The timeout is a compile-time number literal: the runtime helper takes
 the whole bound as an argument, so a computed timeout fences rather
 than being ignored (the rule `subprocess.run(timeout=)` already set).
-`stdout=`/`stderr=`/`stdin=` name `subprocess.PIPE`; every other spawn
-keyword (the environment and the working directory, issue #1344) fences.
+`stdout=`/`stderr=`/`stdin=` name `subprocess.PIPE`; `cwd=` (a str or
+Path), `env=` (a `dict[str, str]` that replaces the child environment) and
+`start_new_session=True` (setsid in the child) are the spawn keywords of
+issue #1344; every other spawn keyword fences.
 The pipe handles are not optional here: `proc.stdout` always answers a
 handle, and a read on a stream that was not piped raises ValueError at
 run time (CPython answers None there and the read raises on the None).
@@ -31,17 +33,22 @@ from typing import Any
 
 from pyscriptc.restlower._shared import (
     _class,
+    _dict_node,
     _flag,
     _int,
     _node_type,
     _node_type_kind,
+    _t_dict,
     _t_leaf,
     _type_kind,
 )
+from pyscriptc.restlower._subprocess import _cwd
 
 _POPEN = _class("Popen")
+_POPEN_TEXT = _class("PopenText")
 _PIPE = _class("PopenPipe")
 _BYTES = _t_leaf("bytes")
+_STR = _t_leaf("str")
 
 # The pipe mask bits the runtime ABI carries: bit 0 stdout, bit 1 stderr,
 # bit 2 stdin.
@@ -49,10 +56,17 @@ _PIPE_STDOUT = 1
 _PIPE_STDERR = 2
 _PIPE_STDIN = 4
 
-# The spawn keywords the surface reads. Every other Popen keyword (env=,
-# cwd=, shell=, start_new_session=, ...) is issue #1344's surface and
-# fences here.
-_POPEN_KEYWORDS = {"stdout", "stderr", "stdin"}
+# The spawn flag bits above the pipe mask (issue #1344): bit 3 puts the
+# child in its own session, bit 4 says `env=` replaces the child's
+# environment.
+_NEW_SESSION = 8
+_HAS_ENV = 16
+
+# The pipe keywords the mask reads, and the spawn keywords beside them
+# (issue #1344): the working directory, the replacement environment and
+# the new session. Every other Popen keyword (shell=, text=, ...) fences.
+_PIPE_KEYWORDS = {"stdout", "stderr", "stdin"}
+_POPEN_KEYWORDS = _PIPE_KEYWORDS | {"cwd", "env", "start_new_session", "text", "universal_newlines"}
 
 # The stream selectors the pipe handle carries.
 _STREAM_OUT = 0
@@ -79,7 +93,7 @@ def _pipe_mask(lo: Any, node: ast.Call, span: dict[str, Any]) -> int:
     fences."""
     mask = 0
     for keyword in node.keywords:
-        if keyword.arg not in _POPEN_KEYWORDS:
+        if keyword.arg not in _PIPE_KEYWORDS:
             continue
         value = keyword.value
         piped = False
@@ -107,11 +121,73 @@ def _popen_new(lo: Any, node: ast.Call, span: dict[str, Any]) -> dict[str, Any]:
             lo.fail(
                 node,
                 "PS2003",
-                f"subprocess.Popen keyword {keyword.arg} is not lowered (issue #1344)",
+                f"subprocess.Popen keyword {keyword.arg} is not lowered",
             )
     argv = _argv(lo, node, span)
-    mask = _pipe_mask(lo, node, span)
-    return lo._abi_call("subprocess", "Popen", [argv, _int(mask, span)], _POPEN, "ps_popen_new", span)
+    flags = _pipe_mask(lo, node, span)
+    if _new_session(lo, node):
+        flags |= _NEW_SESSION
+    cwd = _cwd(lo, node, span, "subprocess.Popen")
+    env = _env(lo, node, span)
+    if env is None:
+        env = _dict_node(_t_dict(_t_leaf("str"), _t_leaf("str")), span)
+    else:
+        flags |= _HAS_ENV
+    text = _text_mode(lo, node)
+    return lo._abi_call(
+        "subprocess",
+        "Popen",
+        [argv, _int(flags, span), cwd, env],
+        _POPEN_TEXT if text else _POPEN,
+        "ps_popen_new",
+        span,
+    )
+
+
+def _text_mode(lo: Any, node: ast.Call) -> bool:
+    """`text=True` (or its older spelling `universal_newlines=True`) turns
+    the pipe handles into str streams: the reads decode UTF-8 and
+    translate the newlines, the write encodes. A True or False literal
+    only, since the answer picks the handle's static type."""
+    text = False
+    for keyword in node.keywords:
+        if keyword.arg in {"text", "universal_newlines"}:
+            value = keyword.value
+            if not (isinstance(value, ast.Constant) and isinstance(value.value, bool)):
+                lo.fail(value, "PS2003", f"subprocess.Popen {keyword.arg} takes a True or False literal")
+            text = text or value.value
+    return text
+
+
+def _new_session(lo: Any, node: ast.Call) -> bool:
+    """`start_new_session=` takes a True or False literal: the child calls
+    setsid before the exec, so a death of the parent does not signal it
+    (CPython's contract)."""
+    for keyword in node.keywords:
+        if keyword.arg == "start_new_session":
+            value = keyword.value
+            if not (isinstance(value, ast.Constant) and isinstance(value.value, bool)):
+                lo.fail(value, "PS2003", "subprocess.Popen start_new_session takes a True or False literal")
+            return value.value
+    return False
+
+
+def _env(lo: Any, node: ast.Call, span: dict[str, Any]) -> dict[str, Any] | None:
+    """`env=` takes a `dict[str, str]` that replaces the child's
+    environment whole, or None for the inherited one. The mapping reaches
+    the runtime as the map itself, so the child sees the entries in
+    insertion order (CPython's order for a dict)."""
+    for keyword in node.keywords:
+        if keyword.arg == "env":
+            value = keyword.value
+            if isinstance(value, ast.Constant) and value.value is None:
+                return None
+            env = lo._expr(value)
+            env_t = _node_type(env)
+            if _type_kind(env_t) != "dict" or _type_kind(env_t["key"]) != "str" or _type_kind(env_t["value"]) != "str":
+                lo.fail(value, "PS1003", "subprocess.Popen env takes a dict[str, str]")
+            return env
+    return None
 
 
 def _timeout_ms(lo: Any, node: ast.Call, span: dict[str, Any]) -> int:
@@ -254,24 +330,37 @@ def _pipe_method(lo: Any, node: ast.Call, span: dict[str, Any], receiver: dict[s
     def call(what: str, typ: dict[str, Any], symbol: str, args: list[dict[str, Any]] | None = None) -> dict[str, Any]:
         return lo._abi_call("subprocess", what, [receiver, *(args or [])], typ, symbol, span)
 
+    text = receiver["type"]["name"] == "PopenPipeText"
     if attr == "read":
         lo._reject_keywords(node)
         n = _read_n(lo, node)
+        if text:
+            if n >= 0:
+                # A count is characters in text mode, and a byte read
+                # could split a UTF-8 sequence: only the read-all form.
+                lo.fail(node, "PS2003", "the text pipe read takes no count (read-all only)")
+            return call("PopenPipeText.read", _STR, "ps_pipe_text_read")
         return call("PopenPipe.read", _BYTES, "ps_pipe_read", [_int(n, span)])
     if attr == "readline":
         lo._reject_keywords(node)
         if node.args:
             lo.fail(node, "PS2003", "the pipe readline expects 0 argument(s)")
+        if text:
+            return call("PopenPipeText.readline", _STR, "ps_pipe_text_readline")
         return call("PopenPipe.readline", _BYTES, "ps_pipe_out_readline")
     if attr == "write":
         lo._reject_keywords(node)
         if len(node.args) != 1:
             lo.fail(node, "PS2003", "the pipe write expects 1 argument(s)")
         data = lo._expr(node.args[0])
-        if _node_type_kind(data) != "bytes":
-            lo.fail(node.args[0], "PS1003", "the pipe write takes bytes")
-        # The bytes argument reaches the ABI as its length and its
-        # pointer, so the runtime helper takes the two.
+        want = "str" if text else "bytes"
+        if _node_type_kind(data) != want:
+            lo.fail(node.args[0], "PS1003", f"the pipe write takes {want}")
+        # The argument reaches the ABI as its length and its pointer, so
+        # the runtime helper takes the two. A str writes its UTF-8 bytes
+        # and answers its character count, CPython's text write.
+        if text:
+            return call("PopenPipeText.write", _t_leaf("int"), "ps_pipe_text_write", [data])
         return call("PopenPipe.write", _t_leaf("int"), "ps_pipe_write", [data])
     if attr == "flush":
         lo._reject_keywords(node)

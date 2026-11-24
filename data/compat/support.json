@@ -1,7 +1,7 @@
 {
   "schema": "1",
   "generated": "2026-11-24",
-  "commit": "ca53d57224e3172b3a2ca07457b5548965d40599",
+  "commit": "38a2e6e6eb6b633ac297729b45a7a370088c32e7",
   "sources": {
     "support_data": "scripts/support_data.toml",
     "pins": "benchmarks/compat/top100/pins.json",
@@ -943,7 +943,7 @@
       "version": "3.5.2",
       "status": "\ud83d\udfe1",
       "ratio": "52/148",
-      "blocking": "name-resolution (42), construct-other (27), type-mismatch (21)",
+      "blocking": "name-resolution (42), construct-other (27), type-mismatch (20)",
       "codes": "PS2002, PS2001, PS1003"
     },
     {
@@ -966,9 +966,9 @@
       "name": "filelock",
       "version": "4.1.1",
       "status": "\ud83d\udfe1",
-      "ratio": "245/641",
-      "blocking": "name-resolution (180), construct-other (118), field-lookup (64)",
-      "codes": "PS2002, PS2001, PS1103"
+      "ratio": "244/641",
+      "blocking": "name-resolution (181), construct-other (118), field-lookup (64)",
+      "codes": "PS2002, PS2001, PS2003"
     },
     {
       "name": "h11",
@@ -991,8 +991,8 @@
       "version": "2.3.1",
       "status": "\ud83d\udfe1",
       "ratio": "10/34",
-      "blocking": "type-mismatch (5), call-arity (4), construct-other (3)",
-      "codes": "PS2002, PS1003, PS2003"
+      "blocking": "call-arity (4), construct-other (3), optional-types (2)",
+      "codes": "PS2002, PS2003, PS1102"
     },
     {
       "name": "jmespath",
@@ -1030,16 +1030,16 @@
       "name": "pathspec",
       "version": "1.1.1",
       "status": "\ud83d\udd34",
-      "ratio": "75/132",
-      "blocking": "name-resolution (27), unlowered-type-name (20), type-mismatch (19)",
-      "codes": "PS2002, PS1106, PS1003"
+      "ratio": "73/132",
+      "blocking": "name-resolution (27), unlowered-type-name (20), construct-other (15)",
+      "codes": "PS2002, PS1106, PS2001"
     },
     {
       "name": "platformdirs",
       "version": "4.13.0",
       "status": "\ud83d\udfe1",
-      "ratio": "135/388",
-      "blocking": "construct-other (64), name-resolution (64), optional-types (33)",
+      "ratio": "134/388",
+      "blocking": "construct-other (64), name-resolution (63), optional-types (33)",
       "codes": "PS2002, PS1102, PS2001"
     },
     {

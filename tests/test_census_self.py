@@ -356,8 +356,11 @@ def test_self_census_ballpark() -> None:
     # doctor.py and zigshim.py add about 90 lines.
     # The typing strictness lane (#1315): typinglevels.py (about 1.4k
     # lines), the config table, the report wiring and the tests add about
-    # 1.5k lines, taking the census to about 97,800, so the ceiling moves
-    # to 99k.
+    # 1.5k lines.
+    # The dataclass lifts (O5b, #452): the field flags, the dataclass base
+    # inheritance and the `__post_init__` hook in lower/_classes.py and
+    # restlower/_dataclasses.py add about 230 lines, taking the census to
+    # about 98,000, so the ceiling moves to 99k.
     assert 11_000 <= census["lines"] <= 99_000
     # Relocated program data files (#665): the staged-data plumbing in
     # cli.py and package.py and the rebasing bootstrap in boxed.py add

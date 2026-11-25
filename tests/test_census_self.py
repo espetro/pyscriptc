@@ -353,9 +353,12 @@ def test_self_census_ballpark() -> None:
     # raw dict keys, and the typed helpers add about 140 lines.
     # The shape-aware first-run toolchain hint (#1291): install_command,
     # toolchain_fix and toolchain_found plus their tests' surface in
-    # doctor.py and zigshim.py add about 90 lines, so the ceiling moves
-    # to 98k.
-    assert 11_000 <= census["lines"] <= 98_000
+    # doctor.py and zigshim.py add about 90 lines.
+    # The typing strictness lane (#1315): typinglevels.py (about 1.4k
+    # lines), the config table, the report wiring and the tests add about
+    # 1.5k lines, taking the census to about 97,800, so the ceiling moves
+    # to 99k.
+    assert 11_000 <= census["lines"] <= 99_000
     # Relocated program data files (#665): the staged-data plumbing in
     # cli.py and package.py and the rebasing bootstrap in boxed.py add
     # about 200 lines and 2 self-host fences.

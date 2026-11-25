@@ -883,6 +883,17 @@ ROWS: list[dict[str, Any]] = [
         docs=f"{DOC}#104",
     ),
     _row(
+        "D106",
+        "property setters (issue #439, D4a): c.a = v dispatches to the @<name>.setter, but the "
+        "class-level surface stays fenced — C.a reads the property object in CPython and C.a = v "
+        "writes the class attribute; the compiled subset has neither and fences with a named "
+        "PS2002 per direction",
+        "d106_property_class_access.py",
+        docs=f"{DOC}#106",
+        note="the instance write lane is byte-identical (probes/differential/property_setters.py); "
+        "the class-level read and write fences are the rest of the entry",
+    ),
+    _row(
         "AUDIT-D11", "json.dumps does not escape non-ASCII (audit D11)", "ad11_json_ascii.py", listed=False, docs=AUDIT
     ),
     _row(
